@@ -1,0 +1,16 @@
+{% liquid
+  assign instance = context.instance
+  unless data
+    assign data = '{}' | parse_json
+  endunless
+  assign token = context.constants.MIXPANEL_TOKEN | default: ''
+  if token
+    assign data = data | hash_merge: distinct_id: instance.id, instance_id: instance.id, token: token
+
+    assign event_data = null | hash_merge: event: event_name, properties: data
+    graphql r = 'modules/mixpanel/api_call', data: event_data, template: 'modules/mixpanel/track_event'
+    return r
+  else
+    log '', type: 'ERROR: modules/mixpanel MIXPANEL_TOKEN is missing'
+  endif
+%}
