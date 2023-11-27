@@ -5,7 +5,7 @@
   endunless
   assign token = context.constants.MIXPANEL_TOKEN | default: ''
   if token
-    assign data = data | hash_merge: distinct_id: instance.id, instance_id: instance.id, token: token
+    assign data = data | hash_merge: distinct_id: distinct_id, instance_id: instance.id, token: token
 
     assign event_data = null | hash_merge: event: event_name, properties: data
     graphql r = 'modules/mixpanel/api_call', data: event_data, template: 'modules/mixpanel/track_event'
